@@ -20,7 +20,7 @@ public class Library {
     public boolean addBook(Book book) throws IllegalArgumentException {
 
         if (book == null) throw new IllegalArgumentException("Argument 'book' can't be null");
-        // check if ISBN of book was set (default value 0 if not)
+        // check if ISBN of book was set (default value 0 if not).
         if (book.getISBN() == 0) throw new IllegalArgumentException("ISBN of book must be set");
         // use isbn to check if book is already stored in library
         long isbn = book.getISBN();
@@ -41,7 +41,8 @@ public class Library {
     }
 
     // returns book with given isbn if it's stored in the library. returns null otherwise.
-    Book getBookByISBN(long isbn) {
+    Book getBookByISBN(long isbn) throws IllegalArgumentException {
+        Book.validateISBN(isbn);
         for (int i = 0; i < insertionIndex; i++) {
             if (bookInventory[i].getISBN() == isbn) return bookInventory[i];
         }
@@ -49,7 +50,8 @@ public class Library {
     }
 
     // returns true if a book with given isbn is available in library. returns false otherwise.
-    public boolean isAvailable(long isbn) {
+    public boolean isAvailable(long isbn) throws IllegalArgumentException {
+        Book.validateISBN(isbn);
         Book book = getBookByISBN(isbn);
         if (book == null) return false;
         return book.isAvailable();
@@ -57,17 +59,19 @@ public class Library {
 
     // if book with given isbn is available, returns it and sets its
     // isAvailable attribute to false. returns null otherwise.
-    public Book borrowBook(long isbn) {
+    public Book borrowBook(long isbn) throws IllegalArgumentException {
+        Book.validateISBN(isbn);
         Book book = getBookByISBN(isbn);
         if (book == null) return null; // check if book is stored
-        if (!book.isAvailable()) return null; // check if it can be borrowed
+        if (!book.isAvailable()) return null; // check if book can be borrowed
         book.setAvailability(false);
         return book;
     }
 
-    // returns an array containing all books written by given author (and stored in library)
-    public Book[] getsBooksByAuthor(String author) {
-
+    // returns an array containing all books written by given author (and stored in library).
+    // if no matches found, array is empty.
+    public Book[] getsBooksByAuthor(String author) throws IllegalArgumentException {
+        Book.validateString(author,"author");
         Book[] booksOfAuthor = new Book[MAX_NUM_OF_BOOKS];
         int matches = 0; // counts number of books written by author
         for (int i = 0; i < insertionIndex; i++) {
@@ -79,9 +83,10 @@ public class Library {
         return Arrays.copyOfRange(booksOfAuthor, 0, matches);
     }
 
-    // returns an array containing all books of given topic with relevance > 7
-    public Book[] getRelevantNonfiction(String topic) {
-
+    // returns an array containing all books of given topic with relevance > 7.
+    // if no matches found, array is empty.
+    public Book[] getRelevantNonfiction(String topic) throws IllegalArgumentException{
+        Book.validateString(topic,"topic");
         Book[] matchingBooks = new Book[MAX_NUM_OF_BOOKS];
         int matches = 0; // counts number of matching books
         for (int i = 0; i < insertionIndex; i++) {
@@ -92,7 +97,7 @@ public class Library {
                 matchingBooks[matches++] = book;
             }
         }
-        // Copy matching books to array with adequate length
+        // copy matching books to array with adequate length
         return Arrays.copyOfRange(matchingBooks, 0, matches);
 
     }

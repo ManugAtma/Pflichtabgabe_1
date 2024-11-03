@@ -7,6 +7,7 @@ public class Book {
     private boolean isAvailable = true;
 
     // TODO: check if isbn already exists?, static attr list?
+    // TODO: parameterless constructor throws exception?
 
     Book() {
         // default values to prevent null pointers
@@ -22,52 +23,47 @@ public class Book {
         setPages(pages);
     }
 
-    // if an attribute has been set already, it shouldn't be changed again.
-    // these setters ensure that by checking for default values (java default value for numbers: 0,
-    // custom default value for Strings: "not provided").
+    // static methods
 
-    // if isbn wasn't set previously, sets it and returns true. returns false otherwise.
-    public boolean setISBN(long isbn) throws IllegalArgumentException {
-        if (this.isbn != 0) return false; // no default value (0), so isbn had been set already
+    // checks if given String is null or empty. if yes, throws exception.
+    public static void validateString(String s, String output) throws IllegalArgumentException{
+        if ((s == null) || (s.isEmpty())) {
+            throw new IllegalArgumentException("Must provide valid " + output);
+        }
+    }
+
+    // checks if given isbn has 13 digits. if yes, throws exception.
+    public static void validateISBN(long isbn) throws IllegalArgumentException {
         String isbnAsString = Long.toString(isbn);
         if (isbnAsString.length() != 13) {
             throw new IllegalArgumentException("ISBN length must be exactly 13 digits");
         }
-        if (isbnAsString.charAt(0) == 0) {
-            throw new IllegalArgumentException("ISBN can't be an octal or hex number");
-        }
+    }
+
+    // instance methods
+
+    // defensive setters
+
+    public void setISBN(long isbn) throws IllegalArgumentException {
+        Book.validateISBN(isbn);
         this.isbn = isbn;
-        return true;
     }
 
-    // if title wasn't set previously, sets it and returns true. returns false otherwise.
-    public boolean setTitle(String title) throws IllegalArgumentException {
-        if (!this.title.equals("not provided")) return false; // no default value, so title had been set already
-        if ((title == null) || (title.isEmpty())) {
-            throw new IllegalArgumentException("Must provide valid title");
-        }
+    public void setTitle(String title) throws IllegalArgumentException {
+        Book.validateString(title,"title");
         this.title = title;
-        return true;
     }
 
-    // if author wasn't set previously, sets it and returns true. returns false otherwise.
-    public boolean setAuthor(String author) throws IllegalArgumentException {
-        if (!this.author.equals("not provided")) return false; // no default value, so author had been set already
-        if ((author == null) || (author.isEmpty())) {
-            throw new IllegalArgumentException("Must provide valid author");
-        }
+    public void setAuthor(String author) throws IllegalArgumentException {
+        Book.validateString(author, "author");
         this.author = author;
-        return true;
     }
 
-    // if number of pages wasn't set previously, sets it and returns true. returns false otherwise.
-    public boolean setPages(int pages) throws IllegalArgumentException {
-        if (this.pages != 0) return false; // no default value (0), so pages had been set already
+    public void setPages(int pages) throws IllegalArgumentException {
         if (pages < 1) {
             throw new IllegalArgumentException("Book must have at least one page");
         }
         this.pages = pages;
-        return true;
     }
 
     public void setAvailability(boolean isAvailable) {
@@ -91,6 +87,7 @@ public class Book {
     String getAuthor() {
         return author;
     }
+
 
     public boolean isAvailable() {
         return isAvailable;

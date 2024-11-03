@@ -13,14 +13,9 @@ public class Novel extends Book {
         setGenre(genre);
     }
 
-    // if genre wasn't set previously, sets it and returns true. returns false otherwise.
-    boolean setGenre(String genre) throws IllegalArgumentException {
-        if (!this.genre.equals("not provided")) return false; // no default value, so genre had been set already
-        if ((genre == null) || (genre.isEmpty())) {
-            throw new IllegalArgumentException("Valid genre must be provided");
-        }
+    void setGenre(String genre) throws IllegalArgumentException {
+        Book.validateString(genre,"genre");
         this.genre = genre;
-        return true;
     }
 
     String getGenre() {
