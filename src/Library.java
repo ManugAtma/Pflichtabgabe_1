@@ -15,7 +15,6 @@ public class Library {
     }
 
 
-    // TODO: make defensive, book with no attr set?
     // if space is available, adds a book to library and returns true. returns false otherwise.
     public boolean addBook(Book book) throws IllegalArgumentException {
 
@@ -69,7 +68,7 @@ public class Library {
     }
 
     // returns an array containing all books written by given author (and stored in library).
-    // if no matches found, array is empty.
+    // array is empty if no matches found.
     public Book[] getsBooksByAuthor(String author) throws IllegalArgumentException {
         Book.validateString(author,"author");
         Book[] booksOfAuthor = new Book[MAX_NUM_OF_BOOKS];

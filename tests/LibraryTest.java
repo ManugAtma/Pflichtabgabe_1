@@ -1,16 +1,31 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LibraryTest {
 
     Library lib;
-
+    Book book;
+    NonfictionBook nFBook;
+    Novel novel;
 
     @BeforeEach
     public void setUp() {
         lib = new Library();
+    }
+
+    // borrowBook (BB)
+
+    // TODO: Grenzfälle?
+
+    // additional method to avoid redundant code. adds 3 books to library
+    public void addBooksToLibrary (){
+        book = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
+        nFBook = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
+        novel = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
+        lib.addBook(book);
+        lib.addBook(nFBook);
+        lib.addBook(novel);
     }
 
     // tests for borrowBook (BB)
@@ -18,39 +33,27 @@ public class LibraryTest {
     // Normalfall 1: book stored in middle of inventory and available
     @Test
     public void testBBStoredAndAvailable() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        NonfictionBook nfb = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
-        Novel n = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
-        lib.addBook(b);
-        lib.addBook(nfb);
-        lib.addBook(n);
-        assertEquals(nfb, lib.borrowBook(2222222222222L));
+        addBooksToLibrary();
+        assertEquals(nFBook, lib.borrowBook(2222222222222L));
+        assertFalse(nFBook.isAvailable());
     }
 
     // Normalfall 2: book stored in middle of inventory but not available
     @Test
     public void testBBStored() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        NonfictionBook nfb = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
-        Novel n = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
-        lib.addBook(b);
-        lib.addBook(nfb);
-        lib.addBook(n);
-        nfb.setAvailability(false);
+        addBooksToLibrary();
+        nFBook.setAvailability(false);
         assertNull(lib.borrowBook(2222222222222L));
+        assertFalse(nFBook.isAvailable());
     }
 
     // Normalfall 3: Szenario: method called two times in a row
     @Test
     public void testBBTwoTimes() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        NonfictionBook nfb = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
-        Novel n = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
-        lib.addBook(b);
-        lib.addBook(nfb);
-        lib.addBook(n);
+        addBooksToLibrary();
         lib.borrowBook(2222222222222L);
         assertNull(lib.borrowBook(2222222222222L));
+        assertFalse(nFBook.isAvailable());
     }
 
     // best case: empty library
@@ -70,50 +73,48 @@ public class LibraryTest {
         assertNull(lib.borrowBook(2222222222222L));
     }
 
-    // Fehlerfall: illegal isbn, only 4 digits
+    // Fehlerfall 1: illegal isbn: only 4 digits
     @Test
-    public void testBBIllegalISBN() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        lib.addBook(b);
+    public void testBBIllegalISBNLength() {
         assertThrows(IllegalArgumentException.class, () -> {
             lib.borrowBook(1111);
         });
     }
 
-// TODO: Grenzfälle?
+    // Fehlerfall 2: illegal isbn: 13 symbols but one of them is "-"
+    @Test
+    public void testBBNegativeISBN() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lib.borrowBook(-111111111111L);
+        });
+    }
+
 
     // tests for getRelevantNonfiction (GRN)
 
-    // Normalfall 1: some Nonfiction books with both matching genre and relevance,
+    // TODO: Grenzfälle? sind tests für rel == 7 and rel == 8 Grenzfälle?
+
+    // Normalfall 1: some Nonfiction books with matching genre and matching relevance,
     // some books that are not of type Nonfiction
     @Test
     public void testGRNAllNonfictionMatch() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        NonfictionBook nfb1 = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
-        NonfictionBook nfb2 = new NonfictionBook(4444444444444L, "SQL", "Gaertner", 439, "IT", 9);
-        Novel n = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
-        lib.addBook(b);
-        lib.addBook(nfb1);
-        lib.addBook(nfb2);
-        lib.addBook(n);
-        assertEquals(nfb1, lib.getRelevantNonfiction("IT")[0]);
-        assertEquals(nfb2, lib.getRelevantNonfiction("IT")[1]);
+        addBooksToLibrary();
+        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "SQL", "Gaertner", 439, "IT", 9);
+        lib.addBook(nFBook2);
+        assertEquals(nFBook, lib.getRelevantNonfiction("IT")[0]);
+        assertEquals(nFBook2, lib.getRelevantNonfiction("IT")[1]);
     }
 
-    // Normalfall 2: some Nonfiction books with matching attributes, some Nonfiction books
+    // Normalfall 2: one Nonfiction book with matching attributes, one Nonfiction book
     // with attributes that don't match, some books that are not of type Nonfiction
     @Test
     public void testGRNSomeNonfictionMatch() {
-        Book b = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
-        NonfictionBook nfb1 = new NonfictionBook(2222222222222L, "java", "Alexander", 351, "IT", 10);
-        NonfictionBook nfb2 = new NonfictionBook(4444444444444L, "SQL", "Gaertner", 439, "IT", 9);
-        Novel n = new Novel(3333333333333L, "pride and prejudice", "Austen", 276, "Romance");
-        lib.addBook(b);
-        lib.addBook(nfb1);
-        lib.addBook(nfb2);
-        lib.addBook(n);
-        assertEquals(nfb1, lib.getRelevantNonfiction("IT")[0]);
-        assertEquals(nfb2, lib.getRelevantNonfiction("IT")[1]);
+        addBooksToLibrary();
+        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 9);
+        lib.addBook(nFBook2);
+        Book[] result = lib.getRelevantNonfiction("IT");
+        assertEquals(nFBook, lib.getRelevantNonfiction("IT")[0]);
+        assertEquals(1, result.length);
     }
 
     // best case: empty library
@@ -129,7 +130,7 @@ public class LibraryTest {
         for (int i = 0; i < 10; i++) {
             long x = 1111111111111L;
             NonfictionBook nfb1 = new NonfictionBook(x + i, "java", "Alexander", 351, "IT", 3);
-            NonfictionBook nfb2 = new NonfictionBook(x + 20 + i, "java", "Alexander", 351, "IT", 6);
+            NonfictionBook nfb2 = new NonfictionBook(x + 20 + i, "java 2", "Alexander", 377, "IT", 6);
             lib.addBook(nfb1);
             lib.addBook(nfb2);
         }
@@ -153,32 +154,21 @@ public class LibraryTest {
         });
     }
 
-    // TODO: Grenzfälle?
-    // TODO: in any case: test rel == 7 and rel == 8, Grenzfälle?
+    // Nonfiction book with matching topic and not matching relevance of 7
+    @Test
+    public void testGRNRelevanceOf7() {
+        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 7);
+        lib.addBook(nFBook2);
+        Book[] result = lib.getRelevantNonfiction("IT");
+        assertEquals(0, result.length);
+    }
 
+    // Nonfiction book with matching topic and matching relevance of 8
+    @Test
+    public void testGRNRelevanceOf8() {
+        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 8);
+        lib.addBook(nFBook2);
+        assertEquals(nFBook2, lib.getRelevantNonfiction("sports")[0]);
+    }
 }
-
-
-// -- borrowBook
-// happy path: in bib and ava (in middle)
-// happy path: book in middle, but not ava
-// happy path: mehrmals: erst is ava, dann nicht ava
-// best case: empty bib
-// close to best: boook at beginning
-// worst case: not in bib, bib is full
-// fehlerfall: wrong isbn
-// in lib but not available
-
-
-// -- getRN
-// happypath1: some Novels, all matchT and rel > 7, z.B.9
-// happypath2: some Novels, some both matchT and rel > 7
-// happypath3: some Novels, some only matchT and some only rel > 7
-// happypath4: no novels
-// fehlerfall 1: empty as arg
-// fehlerfall 2: null String as arg
-// best case: empty bib
-// worst case: all Novels, all Romance, but none rel > 7, full bib
-// Grenzfall 1: ava and rel == 8? als normalfall?
-// Grenzfall 2: ava and rel == 7? als normalfall?
 

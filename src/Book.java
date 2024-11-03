@@ -6,9 +6,6 @@ public class Book {
     private int pages;
     private boolean isAvailable = true;
 
-    // TODO: check if isbn already exists?, static attr list?
-    // TODO: parameterless constructor throws exception?
-
     Book() {
         // default values to prevent null pointers
         setTitle("not provided");
@@ -35,8 +32,8 @@ public class Book {
     // checks if given isbn has 13 digits. if yes, throws exception.
     public static void validateISBN(long isbn) throws IllegalArgumentException {
         String isbnAsString = Long.toString(isbn);
-        if (isbnAsString.length() != 13) {
-            throw new IllegalArgumentException("ISBN length must be exactly 13 digits");
+        if ((isbnAsString.length() != 13) || (isbn < 0)) {
+            throw new IllegalArgumentException("ISBN must be positive number with exactly 13 digits");
         }
     }
 

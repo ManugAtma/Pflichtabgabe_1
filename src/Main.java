@@ -70,6 +70,8 @@ public class Main {
         }
         System.out.println("---------------------");
 
+        Book.validateISBN(-111111111111L);
+
 
 
 
