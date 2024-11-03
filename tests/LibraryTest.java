@@ -123,7 +123,7 @@ public class LibraryTest {
         assertEquals(0, result.length);
     }
 
-    // worst case: only Nonfiction books, all match topic, but none matches relevance
+    // worst case: only Nonfiction books, all match topic, but none matches relevance, full library
     @Test
     public void testGRNNoMatchesFullLibrary() {
         for (int i = 0; i < 10; i++) {
@@ -152,6 +152,9 @@ public class LibraryTest {
             lib.getRelevantNonfiction(null);
         });
     }
+
+    // TODO: Grenzfälle?
+    // TODO: in any case: test rel == 7 and rel == 8, Grenzfälle?
 
 }
 
