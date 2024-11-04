@@ -4,12 +4,10 @@ public class Library {
 
     private final int MAX_NUM_OF_BOOKS = 20;
     private final Book[] bookInventory = new Book[MAX_NUM_OF_BOOKS];
-
     // if < MAX_NUM_OF_BOOKS, defines at what position of bookInventory the next book will be added
     private int insertionIndex = 0;
 
-    public Library() {
-    }
+    public Library() {}
 
     // if space is available, adds a book to library and returns true. returns false otherwise.
     public boolean addBook(Book book) throws IllegalArgumentException, NullPointerException {
@@ -28,7 +26,7 @@ public class Library {
         return false;
     }
 
-    // returns the number of all books that have been added to the library
+    // returns the number of all books added to the library
     public int getNumberOfBooks() {
         return insertionIndex; // insertionIndex attribute equals number of stored books
     }
