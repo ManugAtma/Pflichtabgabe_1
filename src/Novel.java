@@ -1,24 +1,24 @@
 public class Novel extends Book {
 
-    String genre;
+    private String genre;
 
-    Novel() {
+    public Novel() {
         // default value to prevent null pointers
         setGenre("not provided");
     }
 
-    Novel(long isbn, String title, String author, int pages, String genre)
-            throws IllegalArgumentException {
+    public Novel(long isbn, String title, String author, int pages, String genre)
+            throws NullPointerException, IllegalArgumentException {
         super(isbn, title, author, pages);
         setGenre(genre);
     }
 
-    void setGenre(String genre) throws IllegalArgumentException {
+    public void setGenre(String genre) throws NullPointerException, IllegalArgumentException {
         Book.validateString(genre,"genre");
         this.genre = genre;
     }
 
-    String getGenre() {
+    public String getGenre() {
         return genre;
     }
 

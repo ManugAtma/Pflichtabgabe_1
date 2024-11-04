@@ -6,13 +6,13 @@ public class Book {
     private int pages;
     private boolean isAvailable = true;
 
-    Book() {
+    public Book() {
         // default values to prevent null pointers
         setTitle("not provided");
         setAuthor("not provided");
     }
 
-    Book(long isbn, String title, String author, int pages)
+    public Book(long isbn, String title, String author, int pages)
             throws IllegalArgumentException {
         setISBN(isbn);
         setTitle(title);
@@ -20,12 +20,15 @@ public class Book {
         setPages(pages);
     }
 
-    // static methods
+    // static methods (so that they can easily be used in Library class as well)
 
     // checks if given String is null or empty. if yes, throws exception.
-    public static void validateString(String s, String output) throws IllegalArgumentException{
-        if ((s == null) || (s.isEmpty())) {
-            throw new IllegalArgumentException("Must provide valid " + output);
+    public static void validateString(String s, String output) throws NullPointerException, IllegalArgumentException {
+        if (s == null) {
+            throw new NullPointerException(output + " can't be null");
+        }
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException(output + " can't be empty");
         }
     }
 
@@ -33,7 +36,7 @@ public class Book {
     public static void validateISBN(long isbn) throws IllegalArgumentException {
         String isbnAsString = Long.toString(isbn);
         if ((isbnAsString.length() != 13) || (isbn < 0)) {
-            throw new IllegalArgumentException("ISBN must be positive number with exactly 13 digits");
+            throw new IllegalArgumentException("ISBN must be a positive number with exactly 13 digits");
         }
     }
 
@@ -46,12 +49,12 @@ public class Book {
         this.isbn = isbn;
     }
 
-    public void setTitle(String title) throws IllegalArgumentException {
-        Book.validateString(title,"title");
+    public void setTitle(String title) throws NullPointerException, IllegalArgumentException {
+        Book.validateString(title, "title");
         this.title = title;
     }
 
-    public void setAuthor(String author) throws IllegalArgumentException {
+    public void setAuthor(String author) throws NullPointerException, IllegalArgumentException {
         Book.validateString(author, "author");
         this.author = author;
     }
@@ -63,7 +66,7 @@ public class Book {
         this.pages = pages;
     }
 
-    public void setAvailability(boolean isAvailable) {
+    public void setAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 
@@ -73,15 +76,11 @@ public class Book {
         return isbn;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    int getPages() {
+    public int getPages() {
         return pages;
     }
 
-    String getAuthor() {
+    public String getAuthor() {
         return author;
     }
 

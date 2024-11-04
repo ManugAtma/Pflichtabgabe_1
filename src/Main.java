@@ -38,39 +38,59 @@ public class Main {
         System.out.println(la.getBibliography());
         System.out.println("---------------------");
 
-        System.out.println(la.getNumberOfBooks());
+        System.out.println("getNumberOfBooks: " + la.getNumberOfBooks());
         System.out.println("---------------------");
 
-        System.out.println(la.getBookByISBN(1111111111111L));
+        System.out.println("getBookByISBN (book): " + la.getBookByISBN(1111111111111L));
         System.out.println("---------------------");
 
-        b.setAvailability(false);
-        System.out.println(la.isAvailable(1111111111111L));
+        System.out.println("getBookByISBN (null): " + la.getBookByISBN(2221111111111L));
         System.out.println("---------------------");
 
-        System.out.println(la.borrowBook(1111111111111L));
+        b.setAvailable(false);
+        System.out.println("isAvailable (false): "+ la.isAvailable(1111111111111L));
+        System.out.println("---------------------");
+
+        b.setAvailable(true);
+        System.out.println("isAvailable (true): " + la.isAvailable(1111111111111L));
+        System.out.println("---------------------");
+
+        System.out.println("borrowBook (book): " + la.borrowBook(1111111111111L));
+        System.out.println("---------------------");
+
+
+        System.out.println("borrowBook (null): " + la.borrowBook(1111111111111L));
         System.out.println("---------------------");
 
 
 
 
 
-        Book[] arr = la.getsBooksByAuthor("Leon");
+
+        System.out.println("getBooksByAuthor(\"Manug\") (2)");
+        Book[] arr = la.getBooksByAuthor("Manug");
         for (Book item: arr){
             System.out.println(item);
         }
         System.out.println("---------------------");
 
-        System.out.println(la.getTotalPagesOfLoveNovels());
-        System.out.println("---------------------");
-
-        Book[] arr2 = la.getRelevantNonfiction("science");
+        System.out.println("getBooksByAuthor(\"Raga\") (0)");
+        Book[] arr2 = la.getBooksByAuthor("Raga");
         for (Book item: arr2){
             System.out.println(item);
         }
         System.out.println("---------------------");
 
-        Book.validateISBN(-111111111111L);
+        System.out.println("getTotalPagesOfLoveNovels (170): " + la.getTotalPagesOfLoveNovels());
+        System.out.println("---------------------");
+
+        System.out.println("getRelevantNonfiction (1): ");
+        Book[] arr3 = la.getRelevantNonfiction("science");
+        for (Book item: arr3){
+            System.out.println(item);
+        }
+        System.out.println("---------------------");
+
 
 
 

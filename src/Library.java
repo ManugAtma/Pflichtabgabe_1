@@ -8,22 +8,16 @@ public class Library {
     // if < MAX_NUM_OF_BOOKS, defines at what position of bookInventory the next book will be added
     private int insertionIndex = 0;
 
-    // TODO: more constructors?
-    // TODO: make all methods defensive!! -> check what happens if bookInventory is empty or Argument null
-
-    Library() {
+    public Library() {
     }
 
-
     // if space is available, adds a book to library and returns true. returns false otherwise.
-    public boolean addBook(Book book) throws IllegalArgumentException {
+    public boolean addBook(Book book) throws IllegalArgumentException, NullPointerException {
 
-        if (book == null) throw new IllegalArgumentException("Argument 'book' can't be null");
+        if (book == null) throw new NullPointerException("Argument 'book' can't be null");
+        // to prevent books with invalid isbn to be added to library
         // check if ISBN of book was set (default value 0 if not).
         if (book.getISBN() == 0) throw new IllegalArgumentException("ISBN of book must be set");
-        // use isbn to check if book is already stored in library
-        long isbn = book.getISBN();
-        if (getBookByISBN(isbn) != null) throw new IllegalArgumentException("Book already stored");
 
         // check if there is space to store book
         if (insertionIndex < MAX_NUM_OF_BOOKS) {
@@ -36,11 +30,12 @@ public class Library {
 
     // returns the number of all books that have been added to the library
     public int getNumberOfBooks() {
-        return insertionIndex;
+        return insertionIndex; // insertionIndex attribute equals number of stored books
     }
 
+    // additional method
     // returns book with given isbn if it's stored in the library. returns null otherwise.
-    Book getBookByISBN(long isbn) throws IllegalArgumentException {
+    public Book getBookByISBN(long isbn) throws IllegalArgumentException {
         Book.validateISBN(isbn);
         for (int i = 0; i < insertionIndex; i++) {
             if (bookInventory[i].getISBN() == isbn) return bookInventory[i];
@@ -63,15 +58,15 @@ public class Library {
         Book book = getBookByISBN(isbn);
         if (book == null) return null; // check if book is stored
         if (!book.isAvailable()) return null; // check if book can be borrowed
-        book.setAvailability(false);
+        book.setAvailable(false);
         return book;
     }
 
     // returns an array containing all books written by given author (and stored in library).
-    // array is empty if no matches found.
-    public Book[] getsBooksByAuthor(String author) throws IllegalArgumentException {
+    // array is empty if no matches are found.
+    public Book[] getBooksByAuthor(String author) throws NullPointerException, IllegalArgumentException {
         Book.validateString(author,"author");
-        Book[] booksOfAuthor = new Book[MAX_NUM_OF_BOOKS];
+        Book[] booksOfAuthor = new Book[MAX_NUM_OF_BOOKS]; // to store matching books
         int matches = 0; // counts number of books written by author
         for (int i = 0; i < insertionIndex; i++) {
             if (bookInventory[i].getAuthor().equals(author)) {
@@ -84,7 +79,7 @@ public class Library {
 
     // returns an array containing all books of given topic with relevance > 7.
     // if no matches found, array is empty.
-    public Book[] getRelevantNonfiction(String topic) throws IllegalArgumentException{
+    public Book[] getRelevantNonfiction(String topic) throws NullPointerException, IllegalArgumentException{
         Book.validateString(topic,"topic");
         Book[] matchingBooks = new Book[MAX_NUM_OF_BOOKS];
         int matches = 0; // counts number of matching books
@@ -98,7 +93,6 @@ public class Library {
         }
         // copy matching books to array with adequate length
         return Arrays.copyOfRange(matchingBooks, 0, matches);
-
     }
 
     // returns the total page number of all love Novels

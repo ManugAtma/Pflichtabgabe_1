@@ -16,8 +16,6 @@ public class LibraryTest {
 
     // borrowBook (BB)
 
-    // TODO: Grenzfälle?
-
     // additional method to avoid redundant code. adds 3 books to library
     public void addBooksToLibrary (){
         book = new Book(1111111111111L, "war and peace", "Tolstoi", 1300);
@@ -42,12 +40,12 @@ public class LibraryTest {
     @Test
     public void testBBStored() {
         addBooksToLibrary();
-        nFBook.setAvailability(false);
-        assertNull(lib.borrowBook(2222222222222L));
+        nFBook.setAvailable(false);
         assertFalse(nFBook.isAvailable());
+        assertNull(lib.borrowBook(2222222222222L));
     }
 
-    // Normalfall 3: Szenario: method called two times in a row
+    // Normalfall 3: scenario: method called two times in a row
     @Test
     public void testBBTwoTimes() {
         addBooksToLibrary();
@@ -89,10 +87,17 @@ public class LibraryTest {
         });
     }
 
+    // Grenzfall: illegal isbn: only 12 digits
+    @Test
+    public void testBBLengthOfISBNAlmostRight(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            lib.borrowBook(111111111111L);
+        });
+    }
+
 
     // tests for getRelevantNonfiction (GRN)
 
-    // TODO: Grenzfälle? sind tests für rel == 7 and rel == 8 Grenzfälle?
 
     // Normalfall 1: some Nonfiction books with matching genre and matching relevance,
     // some books that are not of type Nonfiction
@@ -105,13 +110,15 @@ public class LibraryTest {
         assertEquals(nFBook2, lib.getRelevantNonfiction("IT")[1]);
     }
 
-    // Normalfall 2: one Nonfiction book with matching attributes, one Nonfiction book
-    // with attributes that don't match, some books that are not of type Nonfiction
+    // Normalfall 2: one Nonfiction book with matching attributes, two Nonfiction books
+    // with only one matching attribute, some books that are not of type Nonfiction
     @Test
     public void testGRNSomeNonfictionMatch() {
         addBooksToLibrary();
         NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 9);
         lib.addBook(nFBook2);
+        NonfictionBook nFBook3 = new NonfictionBook(5555555555555L, "CSS is annoying", "William", 239, "IT", 2);
+        lib.addBook(nFBook3);
         Book[] result = lib.getRelevantNonfiction("IT");
         assertEquals(nFBook, lib.getRelevantNonfiction("IT")[0]);
         assertEquals(1, result.length);
@@ -149,26 +156,26 @@ public class LibraryTest {
     // Fehlerfall 2: null as argument
     @Test
     public void testGRNNullArg() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             lib.getRelevantNonfiction(null);
         });
     }
 
-    // Nonfiction book with matching topic and not matching relevance of 7
+    // Grenzfall: Nonfiction book with matching topic and matching relevance of 8
+    @Test
+    public void testGRNRelevanceOf8() {
+        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 8);
+        lib.addBook(nFBook2);
+        assertEquals(nFBook2, lib.getRelevantNonfiction("sports")[0]);
+    }
+
+    // "Gegencheck" für Grenzfall: Nonfiction book with matching topic and non-matching relevance of 7
     @Test
     public void testGRNRelevanceOf7() {
         NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 7);
         lib.addBook(nFBook2);
         Book[] result = lib.getRelevantNonfiction("IT");
         assertEquals(0, result.length);
-    }
-
-    // Nonfiction book with matching topic and matching relevance of 8
-    @Test
-    public void testGRNRelevanceOf8() {
-        NonfictionBook nFBook2 = new NonfictionBook(4444444444444L, "yoga", "Smith", 439, "sports", 8);
-        lib.addBook(nFBook2);
-        assertEquals(nFBook2, lib.getRelevantNonfiction("sports")[0]);
     }
 }
 

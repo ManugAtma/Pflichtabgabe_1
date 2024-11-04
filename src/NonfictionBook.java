@@ -3,26 +3,26 @@ public class NonfictionBook extends Book {
     private String topic;
     private int relevance;
 
-    NonfictionBook() {
+    public NonfictionBook() {
         // default value to prevent null pointers
         setTopic("not provided");
         // default value to be in valid range (1-10)
         setRelevance(1);
     }
 
-    NonfictionBook(long isbn,
+    public NonfictionBook(long isbn,
                    String title,
                    String author,
                    int pages,
                    String topic,
-                   int relevance) throws IllegalArgumentException {
+                   int relevance) throws NullPointerException, IllegalArgumentException {
 
         super(isbn, title, author, pages);
         setTopic(topic);
         setRelevance(relevance);
     }
 
-    void setTopic(String topic) throws IllegalArgumentException {
+    public void setTopic(String topic) throws NullPointerException, IllegalArgumentException {
         Book.validateString(topic,"topic");
         this.topic = topic;
     }
@@ -34,11 +34,11 @@ public class NonfictionBook extends Book {
         this.relevance = relevance;
     }
 
-    String getTopic() {
+    public String getTopic() {
         return topic;
     }
 
-    int getRelevance() {
+    public int getRelevance() {
         return relevance;
     }
 
